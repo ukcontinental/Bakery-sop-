@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bakery SOP — La Petite Colline & Shan Shan Cafe</title>
+<style>
+  :root {
+    --bg: #faf9f7;
+    --bg2: #f2f0eb;
+    --bg3: #e8e5de;
+    --text: #1a1a18;
+    --text2: #5a5a55;
+    --text3: #8a8a82;
+    --border: rgba(0,0,0,0.1);
+    --border2: rgba(0,0,0,0.06);
+    --amber: #BA7517; --amber-bg: #FAEEDA; --amber-border: #FAC775; --amber-text: #633806;
+    --teal: #0F6E56; --teal-bg: #E1F5EE; --teal-border: #9FE1CB; --teal-text: #085041;
+    --coral: #993C1D; --coral-bg: #FAECE7; --coral-border: #F5C4B3; --coral-text: #712B13;
+    --red-bg: #FCEBEB; --red-border: #F7C1C1; --red-text: #A32D2D;
+    --blue-bg: #E6F1FB; --blue-border: #B5D4F4; --blue-text: #0C447C;
+    --green-bg: #EAF3DE; --green-border: #C0DD97; --green-text: #27500A;
+    --radius: 10px; --radius-sm: 6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18; --bg2: #232320; --bg3: #2c2c28;
+      --text: #e8e5de; --text2: #a8a89e; --text3: #6a6a62;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.06);
+      --amber-bg: #2a1a00; --amber-border: #633806; --amber-text: #FAC775;
+      --teal-bg: #001a12; --teal-border: #085041; --teal-text: #9FE1CB;
+      --coral-bg: #2a0a00; --coral-border: #712B13; --coral-text: #F5C4B3;
+      --red-bg: #2a0000; --red-border: #A32D2D; --red-text: #F7C1C1;
+      --blue-bg: #001428; --blue-border: #185FA5; --blue-text: #B5D4F4;
+      --green-bg: #0f2000; --green-border: #27500A; --green-text: #C0DD97;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+
+  /* Header */
+  .site-header { background: var(--bg2); border-bottom: 0.5px solid var(--border); padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .site-header h1 { font-size: 17px; font-weight: 600; color: var(--text); }
+  .site-header p { font-size: 12px; color: var(--text3); margin-top: 1px; }
+  .version-tag { font-size: 11px; background: var(--amber-bg); color: var(--amber-text); padding: 3px 8px; border-radius: 99px; font-weight: 500; white-space: nowrap; }
+
+  /* Nav tabs */
+  .nav-wrap { background: var(--bg2); border-bottom: 0.5px solid var(--border); padding: 0 1rem; overflow-x: auto; display: flex; gap: 2px; -webkit-overflow-scrolling: touch; }
+  .nav-wrap::-webkit-scrollbar { display: none; }
+  .nav-btn { font-size: 13px; padding: 12px 14px; border: none; background: none; color: var(--text3); cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; transition: all .15s; font-family: inherit; }
+  .nav-btn.active { color: var(--text); border-bottom-color: var(--amber); font-weight: 500; }
+  .nav-btn:hover { color: var(--text); }
+
+  /* Main content */
+  .main { max-width: 720px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .sec-title { font-size: 17px; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.8rem; }
+  .sec-title:first-child { margin-top: 0; }
+  .sub-title { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; margin: 1.5rem 0 0.6rem; }
+
+  /* Cards grid */
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  @media (max-width: 480px) { .card-grid { grid-template-columns: 1fr; } }
+  .card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1rem; }
+  .card .icon { font-size: 22px; margin-bottom: 6px; }
+  .card h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .card p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+  /* Bag cards */
+  .bag-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 10px; }
+  .bag-head { padding: 10px 14px; border-bottom: 0.5px solid var(--border2); }
+  .bag-num { font-size: 11px; font-weight: 600; color: var(--text3); margin-bottom: 1px; }
+  .bag-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .bag-desc { font-size: 12px; color: var(--text3); margin-top: 1px; }
+  .bag-rule { font-size: 12px; padding: 7px 14px; background: var(--bg3); border-bottom: 0.5px solid var(--border2); color: var(--text2); }
+  .bag-rule strong { color: var(--text); }
+  .bag-prods { padding: 8px 14px 12px; display: flex; flex-wrap: wrap; gap: 5px; }
+  .prod-chip { font-size: 12px; background: var(--bg3); color: var(--text2); padding: 3px 9px; border-radius: 99px; border: 0.5px solid var(--border); }
+
+  /* Rule boxes */
+  .rule-box { border-radius: var(--radius); padding: 1rem 1.2rem; margin-bottom: 1rem; border: 0.5px solid; }
+  .rule-box.amber { background: var(--amber-bg); border-color: var(--amber-border); }
+  .rule-box.teal { background: var(--teal-bg); border-color: var(--teal-border); }
+  .rule-box.coral { background: var(--coral-bg); border-color: var(--coral-border); }
+  .rule-box h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .rule-box.amber h3 { color: var(--amber-text); }
+  .rule-box.teal h3 { color: var(--teal-text); }
+  .rule-box.coral h3 { color: var(--coral-text); }
+  .rule-box ul { list-style: none; }
+  .rule-box li { font-size: 13px; padding: 5px 0; border-bottom: 0.5px solid rgba(0,0,0,0.06); display: flex; gap: 8px; line-height: 1.5; }
+  .rule-box li:last-child { border-bottom: none; }
+  .rule-box.amber li { color: var(--amber-text); }
+  .rule-box.teal li { color: var(--teal-text); }
+  .rule-box.coral li { color: var(--coral-text); }
+  .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+  .dot.amber { background: var(--amber); }
+  .dot.teal { background: var(--teal); }
+  .dot.coral { background: var(--coral); }
+
+  /* Tip box */
+  .tip { background: var(--bg2); border-left: 3px solid var(--amber); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 10px 14px; margin: 1rem 0; font-size: 13px; color: var(--text2); }
+  .tip strong { color: var(--text); }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; margin-bottom: 1rem; border-radius: var(--radius); border: 0.5px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--bg2); color: var(--text2); font-weight: 600; padding: 9px 12px; text-align: left; border-bottom: 0.5px solid var(--border); white-space: nowrap; }
+  td { padding: 9px 12px; border-bottom: 0.5px solid var(--border2); color: var(--text); vertical-align: top; line-height: 1.5; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg2); }
+
+  /* Badges */
+  .badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 99px; font-weight: 500; white-space: nowrap; margin: 1px; }
+  .badge.sw { background: var(--amber-bg); color: var(--amber-text); }
+  .badge.sa { background: var(--coral-bg); color: var(--coral-text); }
+  .badge.cold { background: var(--blue-bg); color: var(--blue-text); }
+  .badge.combo { background: var(--green-bg); color: var(--green-text); }
+  .warn-tag { background: var(--red-bg); color: var(--red-text); padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .note-tag { background: var(--amber-bg); color: var(--amber-text); padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+
+  /* Priority bar */
+  .pri-bar { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+  .pri { font-size: 12px; padding: 5px 11px; border-radius: var(--radius-sm); font-weight: 600; border: 0.5px solid; }
+  .pri.p1 { background: var(--red-bg); color: var(--red-text); border-color: var(--red-border); }
+  .pri.p2 { background: var(--amber-bg); color: var(--amber-text); border-color: var(--amber-border); }
+  .pri.p3 { background: var(--teal-bg); color: var(--teal-text); border-color: var(--teal-border); }
+  .pri.p4 { background: var(--blue-bg); color: var(--blue-text); border-color: var(--blue-border); }
+  .pri.p5 { background: var(--bg2); color: var(--text3); border-color: var(--border); }
+  .arr { color: var(--text3); font-size: 12px; }
+
+  /* Order type boxes */
+  .ot { border: 0.5px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
+  .ot-head { background: var(--bg2); padding: 10px 14px; font-size: 14px; font-weight: 600; color: var(--text); border-bottom: 0.5px solid var(--border2); }
+  .ot-body { padding: 12px 14px; }
+  .sc { margin-bottom: 10px; }
+  .sc:last-child { margin-bottom: 0; }
+  .sc .lb { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px; }
+  .sc .ac { font-size: 13px; color: var(--text); line-height: 1.6; }
+
+  /* Oven steps */
+  .ov-steps { counter-reset: ov; margin-top: 6px; }
+  .ov-step { display: flex; gap: 10px; margin-bottom: 6px; font-size: 13px; color: var(--text); line-height: 1.5; }
+  .ov-step::before { counter-increment: ov; content: counter(ov); width: 22px; height: 22px; border-radius: 50%; background: var(--bg3); border: 0.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text2); flex-shrink: 0; margin-top: 1px; }
+
+  /* Biz cards */
+  .biz-card { border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 10px; }
+  .biz-head { background: var(--bg2); padding: 10px 14px; font-size: 14px; font-weight: 600; color: var(--text); border-bottom: 0.5px solid var(--border2); }
+  .biz-body { padding: 12px 14px; }
+  .biz-body ul { list-style: none; }
+  .biz-body li { font-size: 13px; color: var(--text2); padding: 4px 0; display: flex; gap: 8px; line-height: 1.5; border-bottom: 0.5px solid var(--border2); }
+  .biz-body li:last-child { border-bottom: none; }
+  .biz-body li::before { content: "—"; color: var(--border); flex-shrink: 0; }
+
+  /* Update note */
+  .update-box { background: var(--blue-bg); border: 0.5px solid var(--blue-border); border-radius: var(--radius); padding: 1rem 1.2rem; margin-top: 2rem; }
+  .update-box h3 { font-size: 14px; font-weight: 600; color: var(--blue-text); margin-bottom: 6px; }
+  .update-box p { font-size: 13px; color: var(--blue-text); line-height: 1.6; }
+
+  /* Footer */
+  .footer { text-align: center; padding: 2rem 1rem; font-size: 12px; color: var(--text3); border-top: 0.5px solid var(--border); margin-top: 2rem; }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div>
+    <h1>🍞 Bakery 教學手冊</h1>
+    <p>La Petite Colline & Shan Shan Cafe</p>
+  </div>
+  <span class="version-tag">最終版 v1.1</span>
+</div>
+
+<div class="nav-wrap">
+  <button class="nav-btn active" onclick="show('overview')">角色總覽</button>
+  <button class="nav-btn" onclick="show('bags')">包材識別</button>
+  <button class="nav-btn" onclick="show('table')">包裝對照表</button>
+  <button class="nav-btn" onclick="show('orders')">訂單處理</button>
+  <button class="nav-btn" onclick="show('biz')">商業訂單</button>
+  <button class="nav-btn" onclick="show('product')">產品知識</button>
+</div>
+
+<div class="main">
+
+  <!-- ① 角色總覽 -->
+  <div id="sec-overview" class="section active">
+    <p class="sec-title">我負責什麼？</p>
+    <div class="card-grid">
+      <div class="card"><div class="icon">📦</div><h3>麵包包裝</h3><p>根據產品選對包材，按規定包裝，整齊擺放至指定位置</p></div>
+      <div class="card"><div class="icon">🧾</div><h3>接單打包</h3><p>機台出單後快速取單，按優先級判斷打包順序，核對後交至正確位置</p></div>
+      <div class="card"><div class="icon">🏢</div><h3>商業訂單</h3><p>準備DUDU、Village Grocery、早餐店訂單，按各家要求包裝</p></div>
+      <div class="card"><div class="icon">💁</div><h3>支援收銀</h3><p>收銀繁忙或下班時支援點單，具體規範參考Cashier SOP</p></div>
+    </div>
+    <div class="tip"><strong>記憶口訣：</strong>先甜後鹹包裝好，出單取單別遲到，優先級別要記牢，商業訂單rush後做</div>
+  </div>
+
+  <!-- ② 包材識別 -->
+  <div id="sec-bags" class="section">
+    <p class="sec-title">8種包材一眼識別</p>
+
+    <div class="bag-card" id="bag1">
+      <div class="bag-head"><div class="bag-num">① 透明環保袋</div><div class="bag-name">COMPOSTABLE 透明袋</div><div class="bag-desc">標有「COMPOSTABLE」字樣 · 全透明 · 可見麵包</div></div>
+      <div class="bag-rule"><strong>注意：</strong>LOGO面朝上，完全冷卻後再裝，封口留空間</div>
+      <div class="bag-prods">
+        <span class="prod-chip">台式菠蘿包</span><span class="prod-chip">巧克力菠蘿包</span><span class="prod-chip">抹茶紅豆菠蘿包</span><span class="prod-chip">台式青蔥包</span><span class="prod-chip">紅豆麵包</span><span class="prod-chip">台式經典奶酥</span><span class="prod-chip">蔓越莓奶酥</span><span class="prod-chip">培根起司棒</span><span class="prod-chip">雙醬起司玉米麵包</span><span class="prod-chip">克林姆麵包</span>
+      </div>
+    </div>
+
+    <div class="bag-card" id="bag2">
+      <div class="bag-head"><div class="bag-num">② 褐色品牌透明袋</div><div class="bag-name">咖啡色底印LOGO袋</div><div class="bag-desc">咖啡色不透明底 · 透明視窗 · 印LA PETITE COLLINE</div></div>
+      <div class="bag-rule"><strong>注意：</strong>LOGO面朝上，完全冷卻後再裝</div>
+      <div class="bag-prods">
+        <span class="prod-chip">台式肉鬆小餐包（2個）</span><span class="prod-chip">葡萄小麵包（4個）</span><span class="prod-chip">咖啡UFO</span>
+      </div>
+    </div>
+
+    <div class="bag-card" id="bag3">
+      <div class="bag-head"><div class="bag-num">③ 白色窗口袋</div><div class="bag-name">白紙底透明視窗袋</div><div class="bag-desc">白色紙底 · 中間透明視窗 · 印LOGO</div></div>
+      <div class="bag-rule"><strong>折法：</strong>折3次，旁邊留折位方便拿取</div>
+      <div class="bag-prods">
+        <span class="prod-chip">可芬 Cruffin 系列</span><span class="prod-chip">蒜蒜球</span><span class="prod-chip">巧克力波波</span><span class="prod-chip">巧克力豆豆</span><span class="prod-chip">鹽之花奶油捲（3個）</span><span class="prod-chip">松露鹽之花奶油捲（3個）</span><span class="prod-chip">迷你小可頌（5個）</span><span class="prod-chip">明太子法國</span><span class="prod-chip">香蔥肉鬆辮</span><span class="prod-chip">塔塔夏威夷法國</span>
+      </div>
+    </div>
+
+    <div class="bag-card" id="bag5">
+      <div class="bag-head"><div class="bag-num">⑤ 白色紙袋（無窗）</div><div class="bag-name">全白不透明紙袋</div><div class="bag-desc">全白不透明 · 印LOGO · 無透明窗口</div></div>
+      <div class="bag-rule"><strong>折法：</strong>折3次</div>
+      <div class="bag-prods">
+        <span class="prod-chip">脆皮榛果杏仁可頌</span><span class="prod-chip">巧克力牛奶麵包</span><span class="prod-chip">Kouign-Amann</span><span class="prod-chip">莓果核桃籃子</span><span class="prod-chip">松露菇菇</span><span class="prod-chip">亞麻籽蔓越莓乳酪球</span><span class="prod-chip">法式芥末脆腸</span><span class="prod-chip">香草蘋果丹麥</span>
+      </div>
+    </div>
+
+    <div class="bag-card" id="bag6">
+      <div class="bag-head"><div class="bag-num">⑥ 大吐司袋</div><div class="bag-name">大款吐司專用袋</div><div class="bag-desc">大尺寸白色吐司袋</div></div>
+      <div class="bag-rule"><strong>折法：</strong>折3次</div>
+      <div class="bag-prods">
+        <span class="prod-chip">早餐吐司</span><span class="prod-chip">蔥花肉鬆吐司</span><span class="prod-chip">軟軟的牛奶吐司</span><span class="prod-chip">柴燒黑糖吐司</span><span class="prod-chip">全麥吐司</span><span class="prod-chip">菠蘿吐司（週末限定）</span><span class="prod-chip">菠蘿三兄弟（合售）</span>
+      </div>
+    </div>
+
+    <div class="bag-card" id="bag7">
+      <div class="bag-head"><div class="bag-num">⑦ 小吐司袋（生吐司專用）</div><div class="bag-name">生吐司半透明袋</div><div class="bag-desc">半透明 · 貼有「生」字標籤或圓形LOGO貼紙</div></div>
+      <div class="bag-rule"><strong>折法：</strong>折3次</div>
+      <div class="bag-prods">
+        <span class="prod-chip">日式生吐司</span><span class="prod-chip">養生紫米紅豆生吐司</span><span class="prod-chip">脆皮吐司</span><span class="prod-chip">龍眼蜜吐司</span><span class="prod-chip">黑芝麻吐司</span><span class="prod-chip">生吐司奶酥厚片</span>
+      </div>
+    </div>
+
+    <div class="bag-card" id="bag8">
+      <div class="bag-head"><div class="bag-num">⑧ 紙盒 <span class="warn-tag">需螢光筆標記</span></div><div class="bag-name">冷藏專屬盒裝</div><div class="bag-desc">專屬盒裝 · 冷藏商品</div></div>
+      <div class="bag-rule"><strong>注意：</strong>訂單上務必以螢光筆標記冷藏提示</div>
+      <div class="bag-prods">
+        <span class="prod-chip">羅馬生乳麵包（芒果）</span><span class="prod-chip">羅馬生乳麵包（草莓）</span><span class="prod-chip">羅馬生乳麵包（鮮奶油）</span><span class="prod-chip">羅馬生乳麵包（抹茶紅豆）</span>
+      </div>
+    </div>
+
+    <div class="tip"><strong>記憶技巧：</strong>透明環保=台式圓包 · 褐色=小圓軟包 · 白窗=可頌/法國麵包 · 全白紙袋=歐式單品 · 大袋=大吐司 · 小袋=生吐司 · 紙盒=生乳包</div>
+  </div>
+
+  <!-- ③ 包裝對照表 -->
+  <div id="sec-table" class="section">
+    <p class="sec-title">包裝大原則</p>
+    <div class="rule-box amber">
+      <h3>順序 & 注意事項</h3>
+      <ul>
+        <li><span class="dot amber"></span>先包甜口味，再包鹹口味</li>
+        <li><span class="dot amber"></span>透明袋/褐色袋裝麵包須等完全冷卻後再包</li>
+        <li><span class="dot amber"></span>有LOGO的袋子，正面朝上／朝前</li>
+        <li><span class="dot amber"></span>所有吐司袋（大/小）均折3次</li>
+      </ul>
+    </div>
+
+    <p class="sec-title">Buns 包裝對照表</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>產品</th><th>口味</th><th>包材</th><th>折法 / 特別注意</th></tr></thead>
+        <tbody>
+          <tr><td>台式菠蘿包</td><td><span class="badge sw">甜</span></td><td>① 透明環保袋</td><td>冷卻後裝，LOGO朝上</td></tr>
+          <tr><td>巧克力菠蘿包</td><td><span class="badge sw">甜</span></td><td>① 透明環保袋</td><td>冷卻後裝，LOGO朝上</td></tr>
+          <tr><td>抹茶紅豆菠蘿包</td><td><span class="badge sw">甜</span></td><td>① 透明環保袋</td><td>冷卻後裝，LOGO朝上</td></tr>
+          <tr><td>台式青蔥包</td><td><span class="badge sa">鹹</span></td><td>① 透明環保袋</td><td>冷卻後裝，LOGO朝上</td></tr>
+          <tr><td>紅豆麵包</td><td><span class="badge sw">甜</span></td><td>① 透明環保袋</td><td>冷卻後裝，LOGO朝上</td></tr>
+          <tr><td>台式經典奶酥</td><td><span class="badge sw">甜</span></td><td>① 透明環保袋</td><td>冷卻後裝，LOGO朝上</td></tr>
+          <tr><td>蔓越莓奶酥</td><td><span class="badge sw">甜</span></td><td>① 透明環保袋</td><td>冷卻後裝，LOGO朝上</td></tr>
+          <tr><td>培根起司棒</td><td><span class="badge sa">鹹</span></td><td>① 透明環保袋</td><td>冷卻後裝，LOGO朝上</td></tr>
+          <tr><td>雙醬起司玉米麵包</td><td><span class="badge sa">鹹</span></td><td>① 透明環保袋</td><td>冷卻後裝，LOGO朝上</td></tr>
+          <tr><td>克林姆麵包</td><td><span class="badge sw">甜</span></td><td>① 透明環保袋</td><td>冷卻後裝，LOGO朝上</td></tr>
+          <tr><td>台式肉鬆小餐包（2個）</td><td><span class="badge sa">鹹</span></td><td>② 褐色透明袋</td><td>冷卻後裝，LOGO朝上</td></tr>
+          <tr><td>葡萄小麵包（4個）</td><td><span class="badge sw">甜</span></td><td>② 褐色透明袋</td><td>冷卻後裝，LOGO朝上</td></tr>
+          <tr><td>咖啡UFO</td><td><span class="badge sw">甜</span></td><td>② 褐色透明袋</td><td>冷卻後裝，LOGO朝上</td></tr>
+          <tr><td>可芬 Cruffin 系列</td><td><span class="badge sw">甜</span></td><td>③ 白色窗口袋</td><td>折3次，留折位</td></tr>
+          <tr><td>蒜蒜球</td><td><span class="badge sa">鹹</span></td><td>③ 白色窗口袋</td><td>折3次，留折位</td></tr>
+          <tr><td>巧克力波波</td><td><span class="badge sw">甜</span></td><td>③ 白色窗口袋</td><td>折3次，留折位</td></tr>
+          <tr><td>巧克力豆豆</td><td><span class="badge sw">甜</span></td><td>③ 白色窗口袋</td><td>折3次</td></tr>
+          <tr><td>鹽之花奶油捲（3個）</td><td><span class="badge sw">甜</span></td><td>③ 白色窗口袋</td><td>折3次 <span class="badge combo">組合</span></td></tr>
+          <tr><td>松露鹽之花奶油捲（3個）</td><td><span class="badge sa">鹹</span></td><td>③ 白色窗口袋</td><td>折3次 <span class="badge combo">組合</span></td></tr>
+          <tr><td>迷你小可頌（5個）</td><td><span class="badge sw">甜</span></td><td>③ 白色窗口袋</td><td>折3次 <span class="badge combo">組合</span></td></tr>
+          <tr><td>明太子法國</td><td><span class="badge sa">鹹</span></td><td>③ 白色窗口袋</td><td>折3次</td></tr>
+          <tr><td>香蔥肉鬆辮</td><td><span class="badge sa">鹹</span></td><td>③ 白色窗口袋</td><td>折3次</td></tr>
+          <tr><td>塔塔夏威夷法國</td><td><span class="badge sa">鹹</span></td><td>③ 白色窗口袋</td><td>折3次</td></tr>
+          <tr><td>脆皮榛果杏仁可頌</td><td><span class="badge sw">甜</span></td><td>⑤ 白色紙袋</td><td>折3次</td></tr>
+          <tr><td>巧克力牛奶麵包</td><td><span class="badge sw">甜</span></td><td>⑤ 白色紙袋</td><td>折3次</td></tr>
+          <tr><td>Kouign-Amann 法式焦糖奶油酥</td><td><span class="badge sw">甜</span></td><td>⑤ 白色紙袋</td><td>折3次</td></tr>
+          <tr><td>莓果核桃籃子</td><td><span class="badge sw">甜</span></td><td>⑤ 白色紙袋</td><td>折3次</td></tr>
+          <tr><td>松露菇菇</td><td><span class="badge sa">鹹</span></td><td>⑤ 白色紙袋</td><td>折3次</td></tr>
+          <tr><td>亞麻籽蔓越莓乳酪球</td><td><span class="badge sa">鹹</span></td><td>⑤ 白色紙袋</td><td>折3次</td></tr>
+          <tr><td>法式芥末脆腸</td><td><span class="badge sa">鹹</span></td><td>⑤ 白色紙袋</td><td>折3次</td></tr>
+          <tr><td>香草蘋果丹麥</td><td><span class="badge sw">甜</span></td><td>⑤ 白色紙袋</td><td>折3次</td></tr>
+          <tr><td>羅馬生乳麵包（4口味）</td><td><span class="badge cold">冷藏</span></td><td>⑧ 紙盒</td><td><span class="warn-tag">螢光筆標記冷藏</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="sec-title">Bread 吐司對照表</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>產品</th><th>口味</th><th>包材</th><th>折法 / 注意</th></tr></thead>
+        <tbody>
+          <tr><td>早餐吐司</td><td><span class="badge sa">鹹</span></td><td>⑥ 大吐司袋</td><td>折3次</td></tr>
+          <tr><td>蔥花肉鬆吐司</td><td><span class="badge sa">鹹</span></td><td>⑥ 大吐司袋</td><td>折3次</td></tr>
+          <tr><td>軟軟的牛奶吐司</td><td><span class="badge sw">甜</span></td><td>⑥ 大吐司袋</td><td>折3次</td></tr>
+          <tr><td>柴燒黑糖吐司</td><td><span class="badge sw">甜</span></td><td>⑥ 大吐司袋</td><td>折3次</td></tr>
+          <tr><td>全麥吐司</td><td><span class="badge sw">甜</span></td><td>⑥ 大吐司袋</td><td>折3次</td></tr>
+          <tr><td>菠蘿吐司（週末限定）</td><td><span class="badge sw">甜</span></td><td>⑥ 大吐司袋</td><td>折3次</td></tr>
+          <tr><td>菠蘿三兄弟（合售）</td><td><span class="badge sw">甜</span></td><td>⑥ 大吐司袋</td><td>折3次</td></tr>
+          <tr><td>日式生吐司</td><td><span class="badge sw">甜</span></td><td>⑦ 小吐司袋</td><td>折3次</td></tr>
+          <tr><td>養生紫米紅豆生吐司</td><td><span class="badge sw">甜</span></td><td>⑦ 小吐司袋</td><td>折3次</td></tr>
+          <tr><td>脆皮吐司</td><td><span class="badge sw">甜</span></td><td>⑦ 小吐司袋</td><td>折3次</td></tr>
+          <tr><td>龍眼蜜吐司</td><td><span class="badge sw">甜</span></td><td>⑦ 小吐司袋</td><td>折3次</td></tr>
+          <tr><td>黑芝麻吐司</td><td><span class="badge sw">甜</span></td><td>⑦ 小吐司袋</td><td>折3次</td></tr>
+          <tr><td>生吐司奶酥厚片</td><td><span class="badge sw">甜</span></td><td>⑦ 小吐司袋</td><td>折3次</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="sec-title">包裝後擺放位置</p>
+    <div class="rule-box teal">
+      <h3>根據產品特性放到對應位置</h3>
+      <ul>
+        <li><span class="dot teal"></span>透明袋 / 褐色袋軟麵包 → 淺箱</li>
+        <li><span class="dot teal"></span>紙袋裝麵包 → 車架</li>
+        <li><span class="dot teal"></span>咖啡UFO → 深箱，置陳架下方</li>
+      </ul>
+    </div>
+    <div class="tip"><strong>記憶：</strong>軟的放淺（淺箱）· 紙的掛架（車架）· UFO沉底（深箱）</div>
+  </div>
+
+  <!-- ④ 訂單處理 -->
+  <div id="sec-orders" class="section">
+    <p class="sec-title">第一步：判斷訂單優先級</p>
+    <div class="pri-bar">
+      <span class="pri p1">Takeout 最優先</span><span class="arr">›</span>
+      <span class="pri p2">Dine-in</span><span class="arr">›</span>
+      <span class="pri p3">Uber</span><span class="arr">›</span>
+      <span class="pri p4">Fantuan</span><span class="arr">›</span>
+      <span class="pri p5">Online 最後</span>
+    </div>
+
+    <p class="sec-title">第二步：裝袋順序</p>
+    <div class="rule-box amber">
+      <h3>從重到輕，從硬到軟</h3>
+      <ul>
+        <li><span class="dot amber"></span>大件產品（吐司 / 盒裝）先放</li>
+        <li><span class="dot amber"></span>較硬、不易壓的麵包次之</li>
+        <li><span class="dot amber"></span>較軟、輕的麵包最後放</li>
+      </ul>
+    </div>
+    <div class="tip"><strong>口訣：</strong>大硬底、軟輕頂，不怕壓壞</div>
+
+    <p class="sec-title">第三步：按訂單類型處理</p>
+    <div class="ot">
+      <div class="ot-head">現場外帶 Takeout</div>
+      <div class="ot-body">
+        <div class="sc"><div class="lb">只有Bakery商品</div><div class="ac">釘上總單 → 直接交給顧客（喊 Takeout to "Name"）</div></div>
+        <div class="sc"><div class="lb">含Bar商品（Drink with bread）</div><div class="ac">釘上總單 → 暫置收銀機旁桌面 → 品項齊全後呼喊顧客</div></div>
+        <div class="sc"><div class="lb">含廚房餐點</div><div class="ac">釘上商品清單 → 接待台斜後方層架 → 等back人員組合整單</div></div>
+      </div>
+    </div>
+
+    <div class="ot">
+      <div class="ot-head">外送 / 預訂自取（Uber / Fantuan / Online）</div>
+      <div class="ot-body">
+        <div class="sc"><div class="lb">只有Bakery產品</div><div class="ac">釘上總單 → 接待台前方層架等待外送員</div></div>
+        <div class="sc"><div class="lb">含Bar或廚房商品</div><div class="ac">包好Bakery → 釘上商品清單 → 後方層架 → 齊單後移至前方</div></div>
+        <div class="sc"><div class="lb">電話訂單</div><div class="ac">釘上總單 → 後方層架 → <span class="warn-tag">確認付款後</span>才可領取</div></div>
+      </div>
+    </div>
+
+    <div class="ot">
+      <div class="ot-head">內用 Dine-in</div>
+      <div class="ot-body">
+        <div class="sc"><div class="lb">標註 *For Here* 或 *After meal*</div><div class="ac">選合適餐盤 → 判斷是否需加熱 → 上餐</div></div>
+        <div class="sc">
+          <div class="lb">需要加熱的步驟</div>
+          <div class="ac">
+            <div class="ov-steps">
+              <div class="ov-step">烤箱上方入水口加入 3～5cc 飲用水</div>
+              <div class="ov-step">左旋鈕轉至麵包類（約11點鐘方向）</div>
+              <div class="ov-step">右旋鈕轉至 2～2.5 分鐘</div>
+              <div class="ov-step">將單子與盛裝盤置於台面，表示使用中或等候烤箱</div>
+            </div>
+          </div>
+        </div>
+        <div class="sc"><div class="lb">單上無標記（外帶單）</div><div class="ac">按外帶流程準備 → 完成後整袋置於收銀機櫃台前方待客人離店時領取</div></div>
+      </div>
+    </div>
+
+    <div class="rule-box coral">
+      <h3>重要提醒</h3>
+      <ul>
+        <li><span class="dot coral"></span>務必認明單號，切忌重複包裝</li>
+        <li><span class="dot coral"></span>冷藏/冷凍商品（羅馬生乳麵包、芋頭布丁菠蘿、芝士蛋糕、奶酥厚片、蒜香吐司）須在單上以螢光筆注記</li>
+        <li><span class="dot coral"></span>Online order會出兩張單：Bakery商品清單 + 整筆Duplicate copy</li>
+      </ul>
+    </div>
+
+    <p class="sec-title">擺放位置總結</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>狀態</th><th>擺放位置</th></tr></thead>
+        <tbody>
+          <tr><td>所有品項齊全</td><td>接待台前方層架</td></tr>
+          <tr><td>等候廚房餐點 / 未付款 / 未齊單</td><td>接待台斜後方層架</td></tr>
+          <tr><td>現場外帶 Drink with bread</td><td>收銀機旁桌面</td></tr>
+          <tr><td>內用顧客的外帶單</td><td>收銀機櫃台前方</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tip"><strong>記憶：</strong>齊了放前 · 沒齊放後 · 飲品放收銀旁</div>
+  </div>
+
+  <!-- ⑤ 商業訂單 -->
+  <div id="sec-biz" class="section">
+    <p class="sec-title">時間安排</p>
+    <div class="rule-box teal">
+      <h3>最佳時機</h3>
+      <ul>
+        <li><span class="dot teal"></span>第一波 Rush hour 結束後的空檔處理商業訂單</li>
+        <li><span class="dot teal"></span>當日須在此時準備好隔天DUDU訂單的包材</li>
+        <li><span class="dot teal"></span>所有品項備齊後回報當日 Charge 檢查清點</li>
+      </ul>
+    </div>
+
+    <div class="biz-card">
+      <div class="biz-head">DUDU 訂單</div>
+      <div class="biz-body"><ul>
+        <li>前一日人員已備好包材，當日仍須仔細核對數量</li>
+        <li>備齊後擺放於餐廳後方（通往廁所/倉庫門旁的牆邊）等待廠商領取</li>
+        <li>部分麵包用熱壓機封口，須確認完整封口</li>
+        <li>吐司尚未降溫可暫不封口，降溫後由Back人員協助封口</li>
+      </ul></div>
+    </div>
+
+    <div class="biz-card">
+      <div class="biz-head">Village Grocery 訂單</div>
+      <div class="biz-body"><ul>
+        <li>有多種吐司組合，須按要求分類裝填對應包裝</li>
+        <li>置於前門旁的透明大置物箱</li>
+        <li>吐司溫度仍高時暫不封口，降溫後再封（注意時間，不可過晚）</li>
+        <li>太陽強光直射導致吐司升溫時，須將透明箱移至餐廳後方</li>
+      </ul></div>
+    </div>
+
+    <div class="biz-card">
+      <div class="biz-head">早餐店 訂單</div>
+      <div class="biz-body"><ul>
+        <li>薄片 1.6cm：10片一袋</li>
+        <li>厚片 3cm：粗分兩袋包裝</li>
+        <li>入袋後須將塑膠袋綁起，防止水分流失</li>
+        <li>完成後所有吐司放入白色深箱等待廠商領取</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ⑥ 產品知識 -->
+  <div id="sec-product" class="section">
+    <p class="sec-title">顧客服務基本功</p>
+    <div class="rule-box teal">
+      <h3>迎賓與推薦</h3>
+      <ul>
+        <li><span class="dot teal"></span>隨時注意進門顧客，即時以「Hello 您好」迎賓</li>
+        <li><span class="dot teal"></span>熟記產品主要原料與特色，根據顧客喜好做推薦</li>
+        <li><span class="dot teal"></span>時間充裕時口頭說明；時間不足時告知顧客掃描手提袋上的 QR Code</li>
+      </ul>
+    </div>
+
+    <p class="sec-title">麵包保存方式</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>類型</th><th>常溫保存</th><th>冷凍保存</th><th>建議加熱方式</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge sw">甜麵包</span></td><td>3 天</td><td>2 星期</td><td rowspan="2">烤箱或電鍋加熱後食用</td></tr>
+          <tr><td><span class="badge sa">鹹麵包</span></td><td>1～2 天</td><td>2 星期</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="rule-box coral">
+      <h3>重要提醒</h3>
+      <ul>
+        <li><span class="dot coral"></span>麵包冷藏容易流失水分、影響口感</li>
+        <li><span class="dot coral"></span>建議冷凍保存，回烤後口感較好</li>
+        <li><span class="dot coral"></span>不建議冷藏，請直接冷凍</li>
+      </ul>
+    </div>
+    <div class="tip"><strong>告訴顧客的話：</strong>「冷凍比冷藏好，回烤後口感更佳，甜麵包常溫3天、鹹麵包1-2天，不建議冷藏」</div>
+  </div>
+
+</div><!-- end .main -->
+
+<div class="footer">
+  Bakery SOP — La Petite Colline & Shan Shan Cafe<br>
+  最終版 v1.1 · 如需更新請聯繫管理人員
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// Support direct anchor navigation (for QR codes)
+window.addEventListener('DOMContentLoaded', () => {
+  const hash = window.location.hash.replace('#', '');
+  const validSections = ['overview','bags','table','orders','biz','product'];
+  if (hash && validSections.includes(hash)) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('sec-' + hash).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => {
+      if (b.getAttribute('onclick').includes(hash)) b.classList.add('active');
+    });
+  }
+});
+</script>
+</body>
+</html>
